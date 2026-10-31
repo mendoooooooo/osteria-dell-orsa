@@ -7,6 +7,7 @@
 <meta name="description" content="Osteria dell'Orsa, Via Mentana 1, Bologna. Tagliatelle, tortellini e crostini dal 1979, nel cuore della zona universitaria.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body data-home="1" id="top">
@@ -26,9 +27,9 @@
 
 <section id="storia">
   <div class="wrap cols">
-    <div class="rv"><div class="big">1979</div></div>
+    <div class="rv dsk"><div class="big">1979</div></div>
     <div class="rv">
-      <h2>La storia</h2>
+      <div class="shead"><h2>La storia</h2><span class="big" aria-hidden="true">1979</span></div>
       <p>L'Osteria dell'Orsa, in via Mentana 1 a Bologna, è nata nel 1979 al posto del locale «Dal Francese», dove si vendevano sandwich e panini. Da subito è stata anche un punto di ritrovo culturale: per anni ha ospitato concerti di ogni genere, dalla musica punk al jazz, con ospiti locali e soprattutto internazionali.</p>
       <p>Oggi è uno dei posti più apprezzati da bolognesi e turisti, per piatti che riportano all'essenza della cucina bolognese e per un'accoglienza attenta a ogni dettaglio.</p>
       <a class="btn" href="menu.html">Scopri il menu</a>
@@ -85,7 +86,7 @@
       <p>Siamo nel mezzo della zona universitaria, in via Mentana 1, nel quartiere San Vitale – San Donato. Il nome della via è recente: nasce con la riforma toponomastica del 1873-1878, quando questo tratto era ancora parte del Borgo di San Pietro.</p>
       <p>A pochi metri ci sono via delle Moline e via Marsala, ritrovo degli studenti, e la storica via Zamboni. Entrambe portano a via Indipendenza, che unisce la stazione Centrale a Piazza Maggiore, tra negozi di ogni tipo.</p>
     </div>
-    <iframe class="map rv" title="Mappa Osteria dell'Orsa" loading="lazy" src="https://www.google.com/maps?q=Osteria+dell%27Orsa+Via+Mentana+1+Bologna&output=embed"></iframe>
+    <div class="map lmap rv" role="application" aria-label="Mappa interattiva: Osteria dell'Orsa, Via Mentana 1, Bologna"></div>
   </div>
 </section>
 
@@ -130,9 +131,12 @@
     <div class="rev-top rv">
       <img src="images/tripadvisor.png" alt="Tripadvisor">
       <div><h2>Parlano di noi</h2><p>Le recensioni dei nostri clienti su Tripadvisor.</p></div>
-      <div class="rev-ctrl"><button class="arr" id="rp" aria-label="Recensioni precedenti">‹</button><button class="arr" id="rn" aria-label="Recensioni successive">›</button></div>
     </div>
-    <div class="track" id="track" tabindex="0" aria-label="Recensioni"></div>
+    <div class="carousel">
+      <button class="arr l" id="rp" aria-label="Recensione precedente"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4l-8 8 8 8"/></svg></button>
+      <div class="stage" id="track" aria-label="Recensioni" aria-live="off"></div>
+      <button class="arr r" id="rn" aria-label="Recensione successiva"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l8 8-8 8"/></svg></button>
+    </div>
     <a class="btn" target="_blank" rel="noopener" href="https://www.tripadvisor.it/UserReviewEdit-g187801-d1076747-Osteria_dell_Orsa-Bologna_Emilia_Romagna.html">Aggiungi una recensione</a>
   </div>
 </section>
@@ -141,7 +145,7 @@
   <div class="wrap">
     <h2 class="rv">Dove siamo e contatti</h2>
     <div class="cols">
-      <iframe class="map rv" title="Mappa" loading="lazy" src="https://www.google.com/maps?q=Osteria+dell%27Orsa+Via+Mentana+1+Bologna&output=embed"></iframe>
+      <div class="map lmap rv" role="application" aria-label="Mappa interattiva: Osteria dell'Orsa, Via Mentana 1, Bologna"></div>
       <div class="rv">
         <dl class="info">
           <dt>Indirizzo</dt><dd>Via Mentana 1, 40126 Bologna</dd>
@@ -156,6 +160,7 @@
   </div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
