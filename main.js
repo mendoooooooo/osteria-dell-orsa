@@ -11,7 +11,7 @@ document.body.insertAdjacentHTML('afterbegin', `
 document.body.insertAdjacentHTML('beforeend', `
 <footer><div class="wrap">
 <div><img src="images/logo-bianco.png" alt="Osteria dell'Orsa"><p>Osteria dell'Orsa s.a.s.<br>Via Mentana, 1 · 40126 Bologna<br>P.IVA 02095460370</p></div>
-<div><p><a class="mail" href="mailto:info@osteriadellorsa.com" style="display:inline">info@osteriadellorsa.com</a><br>+39 051 231576</p><a href="https://www.facebook.com/osteriadellorsa/">Facebook</a><a href="https://www.instagram.com/osteria_dellorsa/">Instagram</a></div>
+<div><p><a class="mail" href="mailto:info@osteriadellorsa.com" style="display:inline">info@osteriadellorsa.com</a><br>+39 051 231576</p><a href="https://www.facebook.com/osteriadellorsa/" target="_blank" rel="noopener">Facebook</a><a href="https://www.instagram.com/osteria_dellorsa/" target="_blank" rel="noopener">Instagram</a></div>
 <div><a href="legal.html#cookie">Cookie Policy</a><a href="legal.html#privacy">Privacy Policy</a><a href="legal.html#whistle">Whistleblowing</a></div>
 </div></footer>`);
 const hd = document.getElementById('hd'), nv = document.getElementById('nv');
@@ -109,10 +109,8 @@ if(mb){
 document.querySelectorAll('.lmap').forEach(el=>{
   if(!window.L)return;
   const c=[44.4982,11.3507];
-  const m=L.map(el,{scrollWheelZoom:false,dragging:!L.Browser.mobile,zoomControl:false}).setView(c,16);
-  const es='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
-  L.tileLayer(es+'World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri — Esri, HERE, Garmin, © OpenStreetMap contributors',maxNativeZoom:16,maxZoom:19}).addTo(m);
-  L.tileLayer(es+'World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:16,maxZoom:19}).addTo(m);
+  const m=L.map(el,{scrollWheelZoom:false,dragging:!L.Browser.mobile,zoomControl:false}).setView(c,17);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri — Esri, HERE, Garmin, © OpenStreetMap contributors',maxZoom:19}).addTo(m);
   L.control.zoom({position:'bottomright'}).addTo(m);
   L.marker(c,{icon:L.divIcon({className:'',html:'<span class="pin"></span>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(m)
    .bindPopup("<b>Osteria dell'Orsa</b><br>Via Mentana 1, Bologna").openPopup();
@@ -128,6 +126,16 @@ document.querySelectorAll('.lmap').forEach(el=>{
   document.querySelectorAll('a.mail').forEach(a=>{
     a.href=`mailto:${TO}?subject=${e(SU)}&body=${e(BODY)}`;
     a.addEventListener('click',ev=>{
+      const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+      if(ios){
+        ev.preventDefault();
+        let opened=false;const on=()=>{if(document.hidden)opened=true};
+        document.addEventListener('visibilitychange',on);addEventListener('pagehide',()=>opened=true,{once:true});
+        const f=document.createElement('iframe');f.style.display='none';
+        f.src=`googlegmail:///co?to=${TO}&subject=${e(SU)}&body=${e(BODY)}`;document.body.appendChild(f);
+        setTimeout(()=>{document.removeEventListener('visibilitychange',on);f.remove();if(!opened)location.href=a.href},1200);
+        return;
+      }
       if(matchMedia('(pointer:coarse)').matches)return;
       ev.preventDefault();
       open(`https://mail.google.com/mail/?view=cm&fs=1&to=${TO}&su=${e(SU)}&body=${e(BODY)}`,'_blank','noopener');
