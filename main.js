@@ -36,7 +36,7 @@ if (mt) {
   const f = v => typeof v === 'number' ? '€ ' + v.toFixed(2).replace('.', ',') : '€ ' + v;
   const show = k => {
     mt.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.textContent === k));
-    mb.innerHTML = M[k].map(([n, pr, d, a]) => `<div class="item"><b>${n}</b><span class="pr">${f(pr)}</span><p>${d}${a ? ` <small>(${a})</small>` : ''}</p></div>`).join('');
+    mb.innerHTML = M[k].map(([n, pr, d, a]) => `<div class="item"><b>${n}</b><span class="pr">${f(pr)}</span><p>${d}${a ? ` <small>(${a})</small><button class="inf" data-n="${n}" data-a="${a}" aria-label="Allergeni: ${n}">i</button>` : ''}</p></div>`).join('');
     mb.animate([{opacity: 0, transform: 'translateY(14px)'}, {opacity: 1, transform: 'none'}], {duration: 450, easing: 'ease-out'});
   };
   Object.keys(M).forEach(k => { const b = document.createElement('button'); b.textContent = k; b.onclick = () => show(k); mt.appendChild(b); });
@@ -71,11 +71,49 @@ const R=[['Mikedelaney111','Ottimo ristorante con un ottimo personale','mag 2026
 ['Jade L.','Cibo semplice con autentico sapore locale','gen 2026 · Con amici','Piatti della tradizione bolognese senza fronzoli. Pasta fresca e piena di sapore, porzioni generose, atmosfera genuinamente locale e rilassata.'],
 ['Carla F.','Lo consiglio','gen 2026 · In coppia','Personale gentile e presente, cibo buono e veloce, prezzi nella norma e niente coperto. Ottime le tagliatelle al ragù.'],
 ['Francesca S.','Osteria tipica da provare','apr 2026 · In famiglia','Ambiente caratteristico, semplice e pulito. Servizio veloce e cortese. Lo consiglio.']];
-const tk=document.getElementById('track');
-if(tk){
-  tk.innerHTML=R.map(([n,t,m,x])=>`<article class="rc"><span class="st" aria-label="5 stelle su 5">●●●●●</span><h3>${t}</h3><small>${m}</small><p>${x}</p><b>${n}</b></article>`).join('');
-  tk.onclick=e=>{const c=e.target.closest('.rc');c&&c.classList.toggle('open')};
-  const step=()=>tk.firstElementChild.offsetWidth+19;
-  document.getElementById('rp').onclick=()=>tk.scrollBy({left:-step(),behavior:'smooth'});
-  document.getElementById('rn').onclick=()=>tk.scrollBy({left:step(),behavior:'smooth'});
+
+const st=document.getElementById('track');
+if(st){
+  st.innerHTML=R.map(([n,t,m,x])=>`<article class="rc"><span class="st" aria-label="5 stelle su 5">●●●●●</span><h3>${t}</h3><small>${m}</small><p>${x}</p><b>${n}</b></article>`).join('');
+  const cs=[...st.children],n=cs.length,gap=24;let cur=0,W=300,pair=false,timer,sx=null;
+  const place=()=>{const sw=st.offsetWidth,step=W+gap;cs.forEach((c,i)=>{let d=((i-cur)%n+n)%n;if(d>n/2)d-=n;
+    const e=pair?d-.5:d,x=sw/2-W/2+e*step;
+    const v=pair?(d>=0&&d<=1?1:(d===-1||d===2?.55:0)):(d===0?1:(Math.abs(d)===1?.55:0));
+    c.style.transform=`translateX(${x}px) scale(${v===1?1:.93})`;c.style.opacity=v;c.style.pointerEvents=v===1?'auto':'none';c.setAttribute('aria-hidden',v!==1)})};
+  const layout=()=>{const sw=st.offsetWidth;pair=sw>=820;W=pair?Math.min(430,(sw-200-gap)/2):Math.min(340,sw*.72);
+    cs.forEach(c=>{c.style.width=W+'px';c.style.height='auto'});
+    const h=Math.max(...cs.map(c=>c.offsetHeight));st.style.height=h+'px';cs.forEach(c=>c.style.height=h+'px');place()};
+  const go=k=>{cur=((cur+k)%n+n)%n;place()};
+  const rst=()=>{clearInterval(timer);timer=setInterval(()=>go(1),6000)};
+  document.getElementById('rp').onclick=()=>{go(-1);rst()};
+  document.getElementById('rn').onclick=()=>{go(1);rst()};
+  st.addEventListener('pointerdown',e=>sx=e.clientX);
+  addEventListener('pointerup',e=>{if(sx==null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>40){go(dx<0?1:-1);rst()}});
+  const car=st.parentElement;car.onmouseenter=()=>clearInterval(timer);car.onmouseleave=rst;
+  addEventListener('resize',layout);layout();rst();document.fonts&&document.fonts.ready.then(layout);
 }
+// ALLERGENI
+if(mb){
+  const AL={1:'Glutine',2:'Crostacei',3:'Uova',4:'Pesce',5:'Arachidi',6:'Soia',7:'Latte',8:'Sedano',9:'Senape',10:'Anidride solforosa',11:'Sesamo',12:'Lupini',13:'Frutta a guscio',14:'Molluschi'};
+  document.body.insertAdjacentHTML('beforeend','<div class="modal" id="md" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><button class="x" aria-label="Chiudi">✕</button><h3 id="mt"></h3><ul id="ml"></ul></div></div>');
+  const md=document.getElementById('md'),close=()=>md.classList.remove('on');
+  mb.addEventListener('click',e=>{const b=e.target.closest('.inf');if(!b)return;
+    const a=b.dataset.a==='tutti'?Object.keys(AL):b.dataset.a.split(',').map(v=>v.trim());
+    document.getElementById('mt').textContent=b.dataset.n;
+    document.getElementById('ml').innerHTML=(b.dataset.a==='tutti'?'<li class="all">Contiene tutti gli allergeni</li>':'')+a.map(k=>`<li><span>${k}</span>${AL[k]||''}</li>`).join('');
+    md.classList.add('on');md.querySelector('.x').focus()});
+  md.onclick=e=>(e.target===md||e.target.classList.contains('x'))&&close();
+  addEventListener('keydown',e=>e.key==='Escape'&&close());
+}
+// MAPPE
+document.querySelectorAll('.lmap').forEach(el=>{
+  if(!window.L)return;
+  const c=[44.4982,11.3507];
+  const m=L.map(el,{scrollWheelZoom:false,dragging:!L.Browser.mobile,zoomControl:false}).setView(c,17);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19,subdomains:'abcd'}).addTo(m);
+  L.control.zoom({position:'bottomright'}).addTo(m);
+  L.marker(c,{icon:L.divIcon({className:'',html:'<span class="pin"></span>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(m)
+   .bindPopup("<b>Osteria dell'Orsa</b><br>Via Mentana 1, Bologna").openPopup();
+  el.insertAdjacentHTML('beforeend','<a class="mlink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Osteria+dell%27Orsa+Via+Mentana+1+Bologna">Indicazioni ↗</a>');
+  setTimeout(()=>m.invalidateSize(),700);
+});
