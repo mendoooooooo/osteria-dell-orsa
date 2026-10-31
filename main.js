@@ -11,7 +11,7 @@ document.body.insertAdjacentHTML('afterbegin', `
 document.body.insertAdjacentHTML('beforeend', `
 <footer><div class="wrap">
 <div><img src="images/logo-bianco.png" alt="Osteria dell'Orsa"><p>Osteria dell'Orsa s.a.s.<br>Via Mentana, 1 · 40126 Bologna<br>P.IVA 02095460370</p></div>
-<div><p>info@osteriadellorsa.com<br>+39 051 231576</p><a href="https://www.facebook.com/osteriadellorsa">Facebook</a><a href="https://www.instagram.com/osteriadellorsa">Instagram</a></div>
+<div><p><a class="mail" href="mailto:info@osteriadellorsa.com" style="display:inline">info@osteriadellorsa.com</a><br>+39 051 231576</p><a href="https://www.facebook.com/osteriadellorsa/">Facebook</a><a href="https://www.instagram.com/osteria_dellorsa/">Instagram</a></div>
 <div><a href="legal.html#cookie">Cookie Policy</a><a href="legal.html#privacy">Privacy Policy</a><a href="legal.html#whistle">Whistleblowing</a></div>
 </div></footer>`);
 const hd = document.getElementById('hd'), nv = document.getElementById('nv');
@@ -95,7 +95,7 @@ if(st){
 // ALLERGENI
 if(mb){
   const AL={1:'Glutine',2:'Crostacei',3:'Uova',4:'Pesce',5:'Arachidi',6:'Soia',7:'Latte',8:'Sedano',9:'Senape',10:'Anidride solforosa',11:'Sesamo',12:'Lupini',13:'Frutta a guscio',14:'Molluschi'};
-  document.body.insertAdjacentHTML('beforeend','<div class="modal" id="md" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><button class="x" aria-label="Chiudi">✕</button><h3 id="mt"></h3><ul id="ml"></ul></div></div>');
+  document.body.insertAdjacentHTML('beforeend','<div class="modal" id="md" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><button class="x" aria-label="Chiudi">✕</button><p class="eyebrow">Allergeni</p><h3 id="mt"></h3><ul id="ml"></ul></div></div>');
   const md=document.getElementById('md'),close=()=>md.classList.remove('on');
   mb.addEventListener('click',e=>{const b=e.target.closest('.inf');if(!b)return;
     const a=b.dataset.a==='tutti'?Object.keys(AL):b.dataset.a.split(',').map(v=>v.trim());
@@ -109,11 +109,28 @@ if(mb){
 document.querySelectorAll('.lmap').forEach(el=>{
   if(!window.L)return;
   const c=[44.4982,11.3507];
-  const m=L.map(el,{scrollWheelZoom:false,dragging:!L.Browser.mobile,zoomControl:false}).setView(c,17);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19,subdomains:'abcd'}).addTo(m);
+  const m=L.map(el,{scrollWheelZoom:false,dragging:!L.Browser.mobile,zoomControl:false}).setView(c,16);
+  const es='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+  L.tileLayer(es+'World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri — Esri, HERE, Garmin, © OpenStreetMap contributors',maxNativeZoom:16,maxZoom:19}).addTo(m);
+  L.tileLayer(es+'World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:16,maxZoom:19}).addTo(m);
   L.control.zoom({position:'bottomright'}).addTo(m);
   L.marker(c,{icon:L.divIcon({className:'',html:'<span class="pin"></span>',iconSize:[22,22],iconAnchor:[11,11]})}).addTo(m)
    .bindPopup("<b>Osteria dell'Orsa</b><br>Via Mentana 1, Bologna").openPopup();
-  el.insertAdjacentHTML('beforeend','<a class="mlink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Osteria+dell%27Orsa+Via+Mentana+1+Bologna">Indicazioni ↗</a>');
+  el.insertAdjacentHTML('beforeend','<a class="mlink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Osteria+dell%27Orsa+Via+Mentana+1+Bologna">Indicazioni <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></a>');
   setTimeout(()=>m.invalidateSize(),700);
 });
+
+// EMAIL precompilata (Gmail su computer, app di posta predefinita su telefono)
+(()=>{
+  const TO='info@osteriadellorsa.com',SU='Richiesta di informazioni',
+  BODY='Buongiorno,\n\nsono [Il tuo nome] e vorrei chiedere le seguenti informazioni:\n\n\n\nRimango in attesa di un vostro riscontro.\nGrazie e cordiali saluti,\n[Il tuo nome]',
+  e=encodeURIComponent;
+  document.querySelectorAll('a.mail').forEach(a=>{
+    a.href=`mailto:${TO}?subject=${e(SU)}&body=${e(BODY)}`;
+    a.addEventListener('click',ev=>{
+      if(matchMedia('(pointer:coarse)').matches)return;
+      ev.preventDefault();
+      open(`https://mail.google.com/mail/?view=cm&fs=1&to=${TO}&su=${e(SU)}&body=${e(BODY)}`,'_blank','noopener');
+    });
+  });
+})();
