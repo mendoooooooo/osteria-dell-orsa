@@ -24,7 +24,14 @@ const pg = document.getElementById('pg'), mn = document.getElementById('mn');
 const sc = () => { hd.classList.toggle('solid', scrollY > 40 || !home); const m = document.documentElement.scrollHeight - innerHeight; pg.style.transform = `scaleX(${m > 0 ? Math.min(1, scrollY / m) : 0})`; };
 sc(); addEventListener('scroll', sc, {passive: true});
 const bgb = document.getElementById('bg');
-const tg = o => { mn.classList.toggle('open', o); document.body.classList.toggle('lock', o); bgb.textContent = o ? '✕' : '☰'; };
+let ly = 0;
+const tg = o => {
+  const b = document.body;
+  if (o === b.classList.contains('lock')) return;
+  if (o) { ly = scrollY; b.style.top = `-${ly}px`; }
+  mn.classList.toggle('open', o); b.classList.toggle('lock', o); bgb.textContent = o ? '✕' : '☰';
+  if (!o) { b.style.top = ''; const r = document.documentElement; r.style.scrollBehavior = 'auto'; scrollTo(0, ly); r.style.scrollBehavior = ''; }
+};
 bgb.onclick = () => tg(!mn.classList.contains('open'));
 mn.onclick = e => e.target.tagName === 'A' && tg(false);
 addEventListener('resize', () => innerWidth > 1180 && tg(false));
