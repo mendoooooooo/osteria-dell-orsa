@@ -31,7 +31,7 @@ nav .btn{color:var(--ink);padding:.5rem 1.1rem}
 .burger{display:none;background:none;border:0;color:#fff;font-size:2rem;cursor:pointer}
 /* hero */
 .hero{min-height:100svh;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;background:var(--ink);color:#fff;padding:7rem 0 4rem}
-.hero::before{content:"";position:absolute;inset:-5%;background:url(images/osteria-dell-orsa-sapori-tagliatelle.jpg) center/cover;opacity:.28;animation:kb 22s ease-in-out infinite alternate}
+.hero::before{content:"";position:absolute;inset:-5%;background:url(images/hero-bg.jpg) center/cover;opacity:.28;animation:kb 22s ease-in-out infinite alternate}
 .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,#16120e40,#16120eee 85%)}
 @keyframes kb{to{transform:scale(1.12) translate(-1.5%,-1%)}}
 .hero .in{position:relative;z-index:2;width:min(780px,88vw)}
@@ -262,7 +262,7 @@ nav a{font-size:1.05rem}
 nav#nv{display:none}
 .burger{display:block;order:0;position:relative;z-index:70;font-size:2.1rem;padding:0 .3rem}
 .lang{order:0;margin-left:auto;margin-right:.5rem;position:relative;z-index:70}
-.mnav{display:flex;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;background:var(--ink);flex-direction:column;align-items:center;justify-content:center;gap:1.3rem;padding:5rem 1rem 2rem;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;z-index:45;overflow-y:auto}
+.mnav{display:flex;position:fixed;top:0;left:0;right:0;bottom:auto;width:100%;height:100vh;height:100lvh;overscroll-behavior:contain;background:var(--ink);flex-direction:column;align-items:center;justify-content:center;gap:1.3rem;padding:5rem 1rem 2rem;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;z-index:45;overflow-y:auto}
 .mnav.open{opacity:1;visibility:visible}
 .mnav a{color:#f4ecde;text-decoration:none;font-family:'Anton',sans-serif;font-size:1.9rem;letter-spacing:.03em;opacity:0;transform:translateY(14px)}
 .mnav.open a{animation:mrise .5s calc(var(--i)*.05s + .1s) both}
@@ -355,3 +355,8 @@ html::-webkit-scrollbar{display:none}
 .lc{padding-bottom:3.2rem}
 .lc .b{bottom:-.8rem;right:-2.8rem}
 @media(max-width:860px){.lc{padding-bottom:2.2rem}.lc .b{bottom:-.6rem;right:-.9rem}}
+/* v16: menu mobile a tutto schermo (anche sotto la barra di Safari) e pagina bloccata dietro */
+body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+html:has(body.lock){overflow:hidden}
+/* v17: hero da telefono: linea sotto i pulsanti, sfondo senza logo */
+@media(max-width:860px){.hero{padding:6rem 0 6.5rem}}
